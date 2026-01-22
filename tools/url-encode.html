@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="URL 编解码工具 - 支持 encodeURI、encodeURIComponent 等多种模式">
+  <title>URL 编解码 - DevTools</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <a href="../index.html" class="logo">
+          <span class="logo-icon">&#128736;</span>
+          <span>DevTools</span>
+        </a>
+        <nav class="nav">
+          <a href="../index.html" class="nav-link">首页</a>
+          <a href="unix-timestamp.html" class="nav-link">时间戳</a>
+          <a href="base64.html" class="nav-link">Base64</a>
+          <a href="url-encode.html" class="nav-link active">URL编码</a>
+          <a href="hash.html" class="nav-link">Hash</a>
+          <a href="uuid.html" class="nav-link">UUID</a>
+          <a href="password.html" class="nav-link">密码</a>
+          <button class="theme-toggle" aria-label="切换主题">&#9790;</button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <div class="container">
+        <!-- Tool Header -->
+        <div class="tool-header">
+          <h1>&#128279; URL 编解码</h1>
+          <p>URL 编码将特殊字符转换为 %XX 格式，以便在 URL 中安全传输</p>
+        </div>
+
+        <!-- Encode/Decode Tool -->
+        <section class="tool-section">
+          <h2>编解码工具</h2>
+          <div class="form-group">
+            <div class="flex items-center justify-between mb-sm">
+              <label class="form-label" for="urlInput" style="margin-bottom: 0;">输入文本</label>
+              <select id="encodeMode" class="form-select" style="width: auto;">
+                <option value="encodeURIComponent">encodeURIComponent</option>
+                <option value="encodeURI">encodeURI</option>
+                <option value="escape">escape (已废弃)</option>
+              </select>
+            </div>
+            <textarea id="urlInput" class="form-textarea" placeholder="输入要编码或解码的文本"></textarea>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-primary" id="encodeUrl">编码 &#8594;</button>
+            <button class="btn btn-secondary" id="decodeUrl">&#8592; 解码</button>
+            <button class="btn btn-secondary" id="clearUrl">清空</button>
+          </div>
+          <div class="form-group mt-md">
+            <label class="form-label" for="urlOutput">输出结果</label>
+            <textarea id="urlOutput" class="form-textarea" placeholder="结果将显示在这里" readonly></textarea>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-sm btn-secondary" id="copyUrlOutput">&#128203; 复制结果</button>
+            <button class="btn btn-sm btn-secondary" id="useAsUrlInput">&#8593; 作为输入</button>
+          </div>
+        </section>
+
+        <!-- Mode Comparison -->
+        <section class="tool-section">
+          <h2>三种模式对比</h2>
+          <div class="form-group">
+            <label class="form-label" for="compareInput">测试字符串</label>
+            <input type="text" id="compareInput" class="form-input" value="Hello World! @#$%^&*()=+[]{}|;':&quot;,./<>?" placeholder="输入测试字符串">
+          </div>
+          <button class="btn btn-primary mb-md" id="compareEncode">对比编码结果</button>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>方法</th>
+                  <th>编码结果</th>
+                </tr>
+              </thead>
+              <tbody id="compareResult">
+                <tr>
+                  <td>encodeURIComponent</td>
+                  <td id="compareResult1">-</td>
+                </tr>
+                <tr>
+                  <td>encodeURI</td>
+                  <td id="compareResult2">-</td>
+                </tr>
+                <tr>
+                  <td>escape</td>
+                  <td id="compareResult3">-</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Info -->
+        <section class="tool-section">
+          <h2>三种方法的区别</h2>
+          <div class="info-box info mb-md">
+            <strong>选择建议：</strong>大多数情况下推荐使用 <code>encodeURIComponent</code>，它对 URL 参数值的编码最为安全。
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>方法</th>
+                  <th>不编码的字符</th>
+                  <th>适用场景</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>encodeURIComponent</code></td>
+                  <td>A-Z a-z 0-9 - _ . ! ~ * ' ( )</td>
+                  <td>编码 URL 参数值</td>
+                </tr>
+                <tr>
+                  <td><code>encodeURI</code></td>
+                  <td>A-Z a-z 0-9 - _ . ! ~ * ' ( ) ; , / ? : @ & = + $ #</td>
+                  <td>编码完整 URL</td>
+                </tr>
+                <tr>
+                  <td><code>escape</code> (已废弃)</td>
+                  <td>A-Z a-z 0-9 @ * _ + - . /</td>
+                  <td>不推荐使用</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="mt-lg mb-md">保留字符编码对照表</h3>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>字符</th>
+                  <th>编码</th>
+                  <th>字符</th>
+                  <th>编码</th>
+                  <th>字符</th>
+                  <th>编码</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>空格</td><td>%20 或 +</td>
+                  <td>!</td><td>%21</td>
+                  <td>"</td><td>%22</td>
+                </tr>
+                <tr>
+                  <td>#</td><td>%23</td>
+                  <td>$</td><td>%24</td>
+                  <td>%</td><td>%25</td>
+                </tr>
+                <tr>
+                  <td>&</td><td>%26</td>
+                  <td>'</td><td>%27</td>
+                  <td>(</td><td>%28</td>
+                </tr>
+                <tr>
+                  <td>)</td><td>%29</td>
+                  <td>*</td><td>%2A</td>
+                  <td>+</td><td>%2B</td>
+                </tr>
+                <tr>
+                  <td>,</td><td>%2C</td>
+                  <td>/</td><td>%2F</td>
+                  <td>:</td><td>%3A</td>
+                </tr>
+                <tr>
+                  <td>;</td><td>%3B</td>
+                  <td>=</td><td>%3D</td>
+                  <td>?</td><td>%3F</td>
+                </tr>
+                <tr>
+                  <td>@</td><td>%40</td>
+                  <td>[</td><td>%5B</td>
+                  <td>]</td><td>%5D</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Code Examples -->
+        <section class="tool-section">
+          <h2>代码示例</h2>
+          <div id="codeExamples"></div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <p class="footer-text">DevTools - 开发者工具集</p>
+        <div class="footer-links">
+          <a href="https://github.com" target="_blank">GitHub</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="../js/common.js"></script>
+  <script src="../js/code-tabs.js"></script>
+  <script>
+    (function() {
+      'use strict';
+
+      // Elements
+      const urlInput = document.getElementById('urlInput');
+      const urlOutput = document.getElementById('urlOutput');
+      const encodeMode = document.getElementById('encodeMode');
+      const encodeUrlBtn = document.getElementById('encodeUrl');
+      const decodeUrlBtn = document.getElementById('decodeUrl');
+      const clearUrlBtn = document.getElementById('clearUrl');
+      const copyUrlOutputBtn = document.getElementById('copyUrlOutput');
+      const useAsUrlInputBtn = document.getElementById('useAsUrlInput');
+
+      const compareInput = document.getElementById('compareInput');
+      const compareEncodeBtn = document.getElementById('compareEncode');
+
+      // Encode functions
+      const encodeFunctions = {
+        encodeURIComponent: (str) => encodeURIComponent(str),
+        encodeURI: (str) => encodeURI(str),
+        escape: (str) => escape(str)
+      };
+
+      // Decode functions
+      const decodeFunctions = {
+        encodeURIComponent: (str) => decodeURIComponent(str),
+        encodeURI: (str) => decodeURI(str),
+        escape: (str) => unescape(str)
+      };
+
+      // Encode
+      encodeUrlBtn.addEventListener('click', () => {
+        try {
+          const text = urlInput.value;
+          const mode = encodeMode.value;
+          urlOutput.value = encodeFunctions[mode](text);
+        } catch (e) {
+          urlOutput.value = `错误: ${e.message}`;
+        }
+      });
+
+      // Decode
+      decodeUrlBtn.addEventListener('click', () => {
+        try {
+          const text = urlInput.value;
+          const mode = encodeMode.value;
+          urlOutput.value = decodeFunctions[mode](text);
+        } catch (e) {
+          urlOutput.value = `错误: ${e.message}`;
+        }
+      });
+
+      // Clear
+      clearUrlBtn.addEventListener('click', () => {
+        urlInput.value = '';
+        urlOutput.value = '';
+      });
+
+      // Copy output
+      copyUrlOutputBtn.addEventListener('click', function() {
+        DevTools.Clipboard.copy(urlOutput.value, this);
+      });
+
+      // Use output as input
+      useAsUrlInputBtn.addEventListener('click', () => {
+        urlInput.value = urlOutput.value;
+        urlOutput.value = '';
+      });
+
+      // Compare encoding modes
+      function updateCompare() {
+        const text = compareInput.value;
+        try {
+          document.getElementById('compareResult1').textContent = encodeURIComponent(text);
+        } catch (e) {
+          document.getElementById('compareResult1').textContent = '错误: ' + e.message;
+        }
+        try {
+          document.getElementById('compareResult2').textContent = encodeURI(text);
+        } catch (e) {
+          document.getElementById('compareResult2').textContent = '错误: ' + e.message;
+        }
+        try {
+          document.getElementById('compareResult3').textContent = escape(text);
+        } catch (e) {
+          document.getElementById('compareResult3').textContent = '错误: ' + e.message;
+        }
+      }
+
+      compareEncodeBtn.addEventListener('click', updateCompare);
+      compareInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') updateCompare();
+      });
+
+      // Initial compare
+      updateCompare();
+
+      // Code examples
+      const codeTabs = new CodeTabs('#codeExamples');
+      codeTabs.setExamples([
+        { lang: 'javascript', label: 'JavaScript', code: CodeTabs.templates.urlEncode.javascript },
+        { lang: 'python', label: 'Python', code: CodeTabs.templates.urlEncode.python },
+        { lang: 'java', label: 'Java', code: CodeTabs.templates.urlEncode.java },
+        { lang: 'swift', label: 'Swift', code: CodeTabs.templates.urlEncode.swift },
+        { lang: 'go', label: 'Go', code: CodeTabs.templates.urlEncode.go }
+      ]);
+    })();
+  </script>
+</body>
+</html>

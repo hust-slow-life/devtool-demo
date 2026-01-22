@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Base64 编解码工具 - 支持文本和文件的 Base64 编码与解码">
+  <title>Base64 编解码 - DevTools</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <a href="../index.html" class="logo">
+          <span class="logo-icon">&#128736;</span>
+          <span>DevTools</span>
+        </a>
+        <nav class="nav">
+          <a href="../index.html" class="nav-link">首页</a>
+          <a href="unix-timestamp.html" class="nav-link">时间戳</a>
+          <a href="base64.html" class="nav-link active">Base64</a>
+          <a href="url-encode.html" class="nav-link">URL编码</a>
+          <a href="hash.html" class="nav-link">Hash</a>
+          <a href="uuid.html" class="nav-link">UUID</a>
+          <a href="password.html" class="nav-link">密码</a>
+          <button class="theme-toggle" aria-label="切换主题">&#9790;</button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <div class="container">
+        <!-- Tool Header -->
+        <div class="tool-header">
+          <h1>&#128196; Base64 编解码</h1>
+          <p>Base64 是一种用 64 个可打印字符来表示二进制数据的编码方式</p>
+        </div>
+
+        <!-- Text Encode/Decode -->
+        <section class="tool-section">
+          <h2>文本编解码</h2>
+          <div class="form-group">
+            <div class="flex items-center justify-between mb-sm">
+              <label class="form-label" for="textInput" style="margin-bottom: 0;">输入文本</label>
+              <div class="flex gap-sm">
+                <select id="textEncoding" class="form-select" style="width: auto;">
+                  <option value="utf-8">UTF-8</option>
+                  <option value="ascii">ASCII</option>
+                  <option value="iso-8859-1">ISO-8859-1</option>
+                </select>
+                <label class="flex items-center gap-sm" style="font-size: 0.875rem;">
+                  <input type="checkbox" id="urlSafe"> URL Safe
+                </label>
+              </div>
+            </div>
+            <textarea id="textInput" class="form-textarea" placeholder="输入要编码或解码的文本"></textarea>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-primary" id="encodeText">编码 &#8594;</button>
+            <button class="btn btn-secondary" id="decodeText">&#8592; 解码</button>
+            <button class="btn btn-secondary" id="clearText">清空</button>
+          </div>
+          <div class="form-group mt-md">
+            <label class="form-label" for="textOutput">输出结果</label>
+            <textarea id="textOutput" class="form-textarea" placeholder="结果将显示在这里" readonly></textarea>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-sm btn-secondary" id="copyTextOutput">&#128203; 复制结果</button>
+            <button class="btn btn-sm btn-secondary" id="useAsInput">&#8593; 作为输入</button>
+          </div>
+        </section>
+
+        <!-- File Encode -->
+        <section class="tool-section">
+          <h2>文件编码</h2>
+          <div id="fileEncodeUpload"></div>
+          <div class="mt-md">
+            <div class="form-group">
+              <label class="form-label">Base64 输出</label>
+              <textarea id="fileEncodeOutput" class="form-textarea" style="min-height: 200px;" placeholder="文件的 Base64 编码将显示在这里" readonly></textarea>
+            </div>
+            <div class="btn-group">
+              <button class="btn btn-sm btn-secondary" id="copyFileEncode">&#128203; 复制</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- File Decode -->
+        <section class="tool-section">
+          <h2>文件解码</h2>
+          <div class="form-group">
+            <label class="form-label" for="base64DecodeInput">Base64 字符串</label>
+            <textarea id="base64DecodeInput" class="form-textarea" style="min-height: 150px;" placeholder="粘贴 Base64 字符串"></textarea>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-primary" id="decodeToFile">解码并下载</button>
+            <button class="btn btn-secondary" id="showHexView">显示 HEX 视图</button>
+          </div>
+          <div class="form-group mt-md">
+            <label class="form-label" for="decodeFileName">文件名</label>
+            <input type="text" id="decodeFileName" class="form-input" placeholder="decoded_file" value="decoded_file">
+          </div>
+          <div id="hexViewContainer" class="mt-md hidden"></div>
+        </section>
+
+        <!-- Info -->
+        <section class="tool-section">
+          <h2>关于 Base64</h2>
+          <div class="info-box info">
+            <strong>什么是 Base64？</strong><br>
+            Base64 是一种基于 64 个可打印字符来表示二进制数据的表示方法。由于 2⁶ = 64，所以每 6 个比特为一个单元，对应某个可打印字符。
+          </div>
+          <div class="table-container mt-md">
+            <table>
+              <thead>
+                <tr>
+                  <th>模式</th>
+                  <th>字符集</th>
+                  <th>填充</th>
+                  <th>用途</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>标准 Base64</td>
+                  <td>A-Z, a-z, 0-9, +, /</td>
+                  <td>=</td>
+                  <td>通用编码</td>
+                </tr>
+                <tr>
+                  <td>URL Safe</td>
+                  <td>A-Z, a-z, 0-9, -, _</td>
+                  <td>无或可选</td>
+                  <td>URL、文件名</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Code Examples -->
+        <section class="tool-section">
+          <h2>代码示例</h2>
+          <div id="codeExamples"></div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <p class="footer-text">DevTools - 开发者工具集</p>
+        <div class="footer-links">
+          <a href="https://github.com" target="_blank">GitHub</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="../js/common.js"></script>
+  <script src="../js/code-tabs.js"></script>
+  <script src="../js/file-upload.js"></script>
+  <script src="../js/hex-view.js"></script>
+  <script>
+    (function() {
+      'use strict';
+
+      // Elements
+      const textInput = document.getElementById('textInput');
+      const textOutput = document.getElementById('textOutput');
+      const textEncoding = document.getElementById('textEncoding');
+      const urlSafe = document.getElementById('urlSafe');
+      const encodeTextBtn = document.getElementById('encodeText');
+      const decodeTextBtn = document.getElementById('decodeText');
+      const clearTextBtn = document.getElementById('clearText');
+      const copyTextOutputBtn = document.getElementById('copyTextOutput');
+      const useAsInputBtn = document.getElementById('useAsInput');
+
+      const fileEncodeOutput = document.getElementById('fileEncodeOutput');
+      const copyFileEncodeBtn = document.getElementById('copyFileEncode');
+
+      const base64DecodeInput = document.getElementById('base64DecodeInput');
+      const decodeToFileBtn = document.getElementById('decodeToFile');
+      const showHexViewBtn = document.getElementById('showHexView');
+      const decodeFileName = document.getElementById('decodeFileName');
+      const hexViewContainer = document.getElementById('hexViewContainer');
+
+      // Text encoding
+      function encodeString(str, encoding) {
+        const encoder = new TextEncoder();
+        return encoder.encode(str);
+      }
+
+      function decodeBytes(bytes, encoding) {
+        const decoder = new TextDecoder(encoding);
+        return decoder.decode(bytes);
+      }
+
+      // Encode text to Base64
+      encodeTextBtn.addEventListener('click', () => {
+        try {
+          const text = textInput.value;
+          const bytes = encodeString(text, textEncoding.value);
+          let result = DevTools.Base64.encodeBytes(bytes, urlSafe.checked);
+          textOutput.value = result;
+        } catch (e) {
+          textOutput.value = `错误: ${e.message}`;
+        }
+      });
+
+      // Decode Base64 to text
+      decodeTextBtn.addEventListener('click', () => {
+        try {
+          const base64 = textInput.value.trim();
+          const bytes = DevTools.Base64.decodeToBytes(base64, urlSafe.checked);
+          const text = decodeBytes(bytes, textEncoding.value);
+          textOutput.value = text;
+        } catch (e) {
+          textOutput.value = `错误: ${e.message}`;
+        }
+      });
+
+      // Clear
+      clearTextBtn.addEventListener('click', () => {
+        textInput.value = '';
+        textOutput.value = '';
+      });
+
+      // Copy output
+      copyTextOutputBtn.addEventListener('click', function() {
+        DevTools.Clipboard.copy(textOutput.value, this);
+      });
+
+      // Use output as input
+      useAsInputBtn.addEventListener('click', () => {
+        textInput.value = textOutput.value;
+        textOutput.value = '';
+      });
+
+      // File upload for encoding
+      const fileUpload = new FileUpload('#fileEncodeUpload', {
+        onFile: (file, data) => {
+          const bytes = new Uint8Array(data);
+          const base64 = DevTools.Base64.encodeBytes(bytes, false);
+          fileEncodeOutput.value = base64;
+        },
+        onError: (err) => {
+          fileEncodeOutput.value = `错误: ${err.message}`;
+        }
+      });
+
+      // Copy file encode output
+      copyFileEncodeBtn.addEventListener('click', function() {
+        DevTools.Clipboard.copy(fileEncodeOutput.value, this);
+      });
+
+      // Decode Base64 to file
+      decodeToFileBtn.addEventListener('click', () => {
+        try {
+          const base64 = base64DecodeInput.value.trim();
+          if (!base64) {
+            alert('请输入 Base64 字符串');
+            return;
+          }
+
+          const bytes = DevTools.Base64.decodeToBytes(base64, false);
+          const blob = new Blob([bytes]);
+          const url = URL.createObjectURL(blob);
+
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = decodeFileName.value || 'decoded_file';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        } catch (e) {
+          alert(`解码错误: ${e.message}`);
+        }
+      });
+
+      // Show HEX view
+      let hexView = null;
+      showHexViewBtn.addEventListener('click', () => {
+        try {
+          const base64 = base64DecodeInput.value.trim();
+          if (!base64) {
+            alert('请输入 Base64 字符串');
+            return;
+          }
+
+          const bytes = DevTools.Base64.decodeToBytes(base64, false);
+
+          hexViewContainer.classList.remove('hidden');
+
+          if (!hexView) {
+            hexView = new HexView('#hexViewContainer');
+          }
+          hexView.setData(bytes);
+        } catch (e) {
+          alert(`解码错误: ${e.message}`);
+        }
+      });
+
+      // Code examples
+      const codeTabs = new CodeTabs('#codeExamples');
+      codeTabs.setExamples([
+        { lang: 'javascript', label: 'JavaScript', code: CodeTabs.templates.base64.javascript },
+        { lang: 'python', label: 'Python', code: CodeTabs.templates.base64.python },
+        { lang: 'java', label: 'Java', code: CodeTabs.templates.base64.java },
+        { lang: 'swift', label: 'Swift', code: CodeTabs.templates.base64.swift },
+        { lang: 'go', label: 'Go', code: CodeTabs.templates.base64.go }
+      ]);
+    })();
+  </script>
+</body>
+</html>

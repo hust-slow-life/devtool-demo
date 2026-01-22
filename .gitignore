@@ -1,0 +1,25 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Node (如果以后添加构建工具)
+node_modules/
+npm-debug.log
+
+# 临时文件
+*.tmp
+*.temp
+*.log

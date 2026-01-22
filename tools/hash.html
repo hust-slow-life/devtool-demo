@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Hash 计算器 - 计算 MD5、SHA1、SHA256、SHA3 等哈希值">
+  <title>Hash 计算器 - DevTools</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <a href="../index.html" class="logo">
+          <span class="logo-icon">&#128736;</span>
+          <span>DevTools</span>
+        </a>
+        <nav class="nav">
+          <a href="../index.html" class="nav-link">首页</a>
+          <a href="unix-timestamp.html" class="nav-link">时间戳</a>
+          <a href="base64.html" class="nav-link">Base64</a>
+          <a href="url-encode.html" class="nav-link">URL编码</a>
+          <a href="hash.html" class="nav-link active">Hash</a>
+          <a href="uuid.html" class="nav-link">UUID</a>
+          <a href="password.html" class="nav-link">密码</a>
+          <button class="theme-toggle" aria-label="切换主题">&#9790;</button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <div class="container">
+        <!-- Tool Header -->
+        <div class="tool-header">
+          <h1>&#128274; Hash 计算器</h1>
+          <p>计算文本或文件的哈希值，支持 MD5、SHA1、SHA256、SHA3 等算法</p>
+        </div>
+
+        <!-- Text Hash -->
+        <section class="tool-section">
+          <h2>文本哈希</h2>
+          <div class="form-group">
+            <label class="form-label" for="hashInput">输入文本</label>
+            <textarea id="hashInput" class="form-textarea" placeholder="输入要计算哈希的文本"></textarea>
+          </div>
+          <div class="form-inline mb-md">
+            <div class="form-group">
+              <label class="form-label" for="hashAlgorithm">算法</label>
+              <select id="hashAlgorithm" class="form-select">
+                <option value="all">全部</option>
+                <option value="MD5">MD5</option>
+                <option value="SHA-1">SHA-1</option>
+                <option value="SHA-256">SHA-256</option>
+                <option value="SHA-384">SHA-384</option>
+                <option value="SHA-512">SHA-512</option>
+                <option value="SHA3-256">SHA3-256</option>
+                <option value="SHA3-512">SHA3-512</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="hashFormat">格式</label>
+              <select id="hashFormat" class="form-select">
+                <option value="hex">Hex (小写)</option>
+                <option value="HEX">Hex (大写)</option>
+                <option value="base64">Base64</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <button class="btn btn-primary" id="calculateTextHash">计算哈希</button>
+            </div>
+          </div>
+          <div id="textHashResult"></div>
+        </section>
+
+        <!-- File Hash -->
+        <section class="tool-section">
+          <h2>文件哈希</h2>
+          <div id="fileHashUpload"></div>
+          <div class="form-inline mt-md mb-md">
+            <div class="form-group">
+              <label class="form-label" for="fileHashAlgorithm">算法</label>
+              <select id="fileHashAlgorithm" class="form-select">
+                <option value="all">全部</option>
+                <option value="MD5">MD5</option>
+                <option value="SHA-1">SHA-1</option>
+                <option value="SHA-256">SHA-256</option>
+                <option value="SHA-384">SHA-384</option>
+                <option value="SHA-512">SHA-512</option>
+                <option value="SHA3-256">SHA3-256</option>
+                <option value="SHA3-512">SHA3-512</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <button class="btn btn-primary" id="calculateFileHash">计算哈希</button>
+            </div>
+          </div>
+          <div id="fileHashResult"></div>
+          <div id="fileHexView" class="mt-md"></div>
+        </section>
+
+        <!-- Info -->
+        <section class="tool-section">
+          <h2>关于哈希算法</h2>
+          <div class="info-box warning mb-md">
+            <strong>安全提示：</strong>MD5 和 SHA-1 已不再被认为是安全的哈希算法，不应用于安全敏感的场景（如密码存储）。推荐使用 SHA-256 或更高强度的算法。
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>算法</th>
+                  <th>输出长度</th>
+                  <th>安全性</th>
+                  <th>用途</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>MD5</td>
+                  <td>128 位 (32 字符)</td>
+                  <td>&#10060; 不安全</td>
+                  <td>文件校验（非安全场景）</td>
+                </tr>
+                <tr>
+                  <td>SHA-1</td>
+                  <td>160 位 (40 字符)</td>
+                  <td>&#10060; 不安全</td>
+                  <td>Git 对象 ID</td>
+                </tr>
+                <tr>
+                  <td>SHA-256</td>
+                  <td>256 位 (64 字符)</td>
+                  <td>&#9989; 安全</td>
+                  <td>通用安全哈希</td>
+                </tr>
+                <tr>
+                  <td>SHA-384</td>
+                  <td>384 位 (96 字符)</td>
+                  <td>&#9989; 安全</td>
+                  <td>高安全需求场景</td>
+                </tr>
+                <tr>
+                  <td>SHA-512</td>
+                  <td>512 位 (128 字符)</td>
+                  <td>&#9989; 安全</td>
+                  <td>高安全需求场景</td>
+                </tr>
+                <tr>
+                  <td>SHA3-256</td>
+                  <td>256 位 (64 字符)</td>
+                  <td>&#9989; 安全</td>
+                  <td>新一代标准</td>
+                </tr>
+                <tr>
+                  <td>SHA3-512</td>
+                  <td>512 位 (128 字符)</td>
+                  <td>&#9989; 安全</td>
+                  <td>新一代标准</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Code Examples -->
+        <section class="tool-section">
+          <h2>代码示例</h2>
+          <div id="codeExamples"></div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <p class="footer-text">DevTools - 开发者工具集</p>
+        <div class="footer-links">
+          <a href="https://github.com" target="_blank">GitHub</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="../libs/crypto-js.min.js"></script>
+  <script src="../js/common.js"></script>
+  <script src="../js/code-tabs.js"></script>
+  <script src="../js/file-upload.js"></script>
+  <script src="../js/hex-view.js"></script>
+  <script>
+    (function() {
+      'use strict';
+
+      // Elements
+      const hashInput = document.getElementById('hashInput');
+      const hashAlgorithm = document.getElementById('hashAlgorithm');
+      const hashFormat = document.getElementById('hashFormat');
+      const calculateTextHashBtn = document.getElementById('calculateTextHash');
+      const textHashResult = document.getElementById('textHashResult');
+
+      const fileHashAlgorithm = document.getElementById('fileHashAlgorithm');
+      const calculateFileHashBtn = document.getElementById('calculateFileHash');
+      const fileHashResult = document.getElementById('fileHashResult');
+      const fileHexView = document.getElementById('fileHexView');
+
+      let uploadedFileData = null;
+
+      // Hash algorithms
+      const algorithms = ['MD5', 'SHA-1', 'SHA-256', 'SHA-384', 'SHA-512', 'SHA3-256', 'SHA3-512'];
+
+      // Calculate hash for data
+      async function calculateHash(data, algorithm) {
+        const bytes = typeof data === 'string'
+          ? new TextEncoder().encode(data)
+          : new Uint8Array(data);
+
+        // Use Web Crypto API for standard algorithms
+        if (['SHA-1', 'SHA-256', 'SHA-384', 'SHA-512'].includes(algorithm)) {
+          const hashBuffer = await crypto.subtle.digest(algorithm, bytes);
+          return new Uint8Array(hashBuffer);
+        }
+
+        // Use CryptoJS for MD5 and SHA3
+        const wordArray = CryptoJS.lib.WordArray.create(bytes);
+        let hash;
+
+        switch (algorithm) {
+          case 'MD5':
+            hash = CryptoJS.MD5(wordArray);
+            break;
+          case 'SHA3-256':
+            hash = CryptoJS.SHA3(wordArray, { outputLength: 256 });
+            break;
+          case 'SHA3-512':
+            hash = CryptoJS.SHA3(wordArray, { outputLength: 512 });
+            break;
+          default:
+            throw new Error(`Unsupported algorithm: ${algorithm}`);
+        }
+
+        // Convert CryptoJS WordArray to Uint8Array
+        const words = hash.words;
+        const sigBytes = hash.sigBytes;
+        const result = new Uint8Array(sigBytes);
+        for (let i = 0; i < sigBytes; i++) {
+          result[i] = (words[i >>> 2] >>> (24 - (i % 4) * 8)) & 0xff;
+        }
+        return result;
+      }
+
+      // Format hash output
+      function formatHash(bytes, format) {
+        const hex = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+
+        switch (format) {
+          case 'HEX':
+            return hex.toUpperCase();
+          case 'base64':
+            let binary = '';
+            for (let i = 0; i < bytes.length; i++) {
+              binary += String.fromCharCode(bytes[i]);
+            }
+            return btoa(binary);
+          default:
+            return hex;
+        }
+      }
+
+      // Render hash results
+      function renderHashResults(results, containerId) {
+        const container = document.getElementById(containerId);
+        let html = '<div class="table-container"><table><thead><tr><th>算法</th><th>哈希值</th><th></th></tr></thead><tbody>';
+
+        for (const [algo, hash] of Object.entries(results)) {
+          html += `
+            <tr>
+              <td><strong>${algo}</strong></td>
+              <td style="font-family: monospace; word-break: break-all;">${hash}</td>
+              <td><button class="copy-btn" data-hash="${hash}">&#128203;</button></td>
+            </tr>
+          `;
+        }
+
+        html += '</tbody></table></div>';
+        container.innerHTML = html;
+
+        // Bind copy buttons
+        container.querySelectorAll('.copy-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            DevTools.Clipboard.copy(this.dataset.hash, this);
+          });
+        });
+      }
+
+      // Calculate text hash
+      calculateTextHashBtn.addEventListener('click', async () => {
+        const text = hashInput.value;
+        if (!text) {
+          textHashResult.innerHTML = '<div class="info-box warning">请输入文本</div>';
+          return;
+        }
+
+        const format = hashFormat.value;
+        const selectedAlgo = hashAlgorithm.value;
+        const algosToCalc = selectedAlgo === 'all' ? algorithms : [selectedAlgo];
+
+        textHashResult.innerHTML = '<div class="info-box info">计算中...</div>';
+
+        try {
+          const results = {};
+          for (const algo of algosToCalc) {
+            const hashBytes = await calculateHash(text, algo);
+            results[algo] = formatHash(hashBytes, format);
+          }
+          renderHashResults(results, 'textHashResult');
+        } catch (e) {
+          textHashResult.innerHTML = `<div class="info-box error">错误: ${e.message}</div>`;
+        }
+      });
+
+      // File upload
+      const fileUpload = new FileUpload('#fileHashUpload', {
+        onFile: (file, data) => {
+          uploadedFileData = data;
+          fileHashResult.innerHTML = '<div class="info-box success">文件已加载，点击"计算哈希"按钮</div>';
+
+          // Show HEX view
+          const hexView = new HexView('#fileHexView', { maxRows: 20 });
+          hexView.setData(new Uint8Array(data));
+        },
+        onError: (err) => {
+          fileHashResult.innerHTML = `<div class="info-box error">错误: ${err.message}</div>`;
+        }
+      });
+
+      // Calculate file hash
+      calculateFileHashBtn.addEventListener('click', async () => {
+        if (!uploadedFileData) {
+          fileHashResult.innerHTML = '<div class="info-box warning">请先选择文件</div>';
+          return;
+        }
+
+        const format = hashFormat.value;
+        const selectedAlgo = fileHashAlgorithm.value;
+        const algosToCalc = selectedAlgo === 'all' ? algorithms : [selectedAlgo];
+
+        fileHashResult.innerHTML = '<div class="info-box info">计算中...</div>';
+
+        try {
+          const results = {};
+          for (const algo of algosToCalc) {
+            const hashBytes = await calculateHash(uploadedFileData, algo);
+            results[algo] = formatHash(hashBytes, format);
+          }
+          renderHashResults(results, 'fileHashResult');
+        } catch (e) {
+          fileHashResult.innerHTML = `<div class="info-box error">错误: ${e.message}</div>`;
+        }
+      });
+
+      // Code examples
+      const codeTabs = new CodeTabs('#codeExamples');
+      codeTabs.setExamples([
+        { lang: 'javascript', label: 'JavaScript', code: CodeTabs.templates.hash.javascript },
+        { lang: 'python', label: 'Python', code: CodeTabs.templates.hash.python },
+        { lang: 'java', label: 'Java', code: CodeTabs.templates.hash.java },
+        { lang: 'swift', label: 'Swift', code: CodeTabs.templates.hash.swift },
+        { lang: 'go', label: 'Go', code: CodeTabs.templates.hash.go }
+      ]);
+    })();
+  </script>
+</body>
+</html>

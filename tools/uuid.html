@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="UUID 生成器 - 生成 UUID v3、v4、v5，支持命名空间和批量生成">
+  <title>UUID 生成器 - DevTools</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <a href="../index.html" class="logo">
+          <span class="logo-icon">&#128736;</span>
+          <span>DevTools</span>
+        </a>
+        <nav class="nav">
+          <a href="../index.html" class="nav-link">首页</a>
+          <a href="unix-timestamp.html" class="nav-link">时间戳</a>
+          <a href="base64.html" class="nav-link">Base64</a>
+          <a href="url-encode.html" class="nav-link">URL编码</a>
+          <a href="hash.html" class="nav-link">Hash</a>
+          <a href="uuid.html" class="nav-link active">UUID</a>
+          <a href="password.html" class="nav-link">密码</a>
+          <button class="theme-toggle" aria-label="切换主题">&#9790;</button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <div class="container">
+        <!-- Tool Header -->
+        <div class="tool-header">
+          <h1>&#128273; UUID 生成器</h1>
+          <p>通用唯一识别码 (Universally Unique Identifier) 生成工具</p>
+        </div>
+
+        <!-- UUID v4 Generator -->
+        <section class="tool-section">
+          <h2>UUID v4 (随机)</h2>
+          <p class="mb-md" style="color: var(--color-text-secondary);">
+            使用加密安全的随机数生成 UUID，最常用的 UUID 版本
+          </p>
+          <div class="form-inline mb-md">
+            <div class="form-group">
+              <label class="form-label" for="v4Count">生成数量</label>
+              <input type="number" id="v4Count" class="form-input" value="1" min="1" max="100" style="width: 100px;">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="v4Format">格式</label>
+              <select id="v4Format" class="form-select">
+                <option value="standard">标准 (带连字符)</option>
+                <option value="no-dash">无连字符</option>
+                <option value="braces">带大括号</option>
+                <option value="urn">URN 格式</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="v4Case">大小写</label>
+              <select id="v4Case" class="form-select">
+                <option value="lower">小写</option>
+                <option value="upper">大写</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <button class="btn btn-primary" id="generateV4">生成</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <textarea id="v4Result" class="form-textarea" style="min-height: 150px;" placeholder="生成的 UUID 将显示在这里" readonly></textarea>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-sm btn-secondary" id="copyV4">&#128203; 复制全部</button>
+          </div>
+        </section>
+
+        <!-- UUID v3/v5 Generator -->
+        <section class="tool-section">
+          <h2>UUID v3/v5 (命名空间)</h2>
+          <p class="mb-md" style="color: var(--color-text-secondary);">
+            基于命名空间和名称生成确定性 UUID。v3 使用 MD5，v5 使用 SHA-1
+          </p>
+          <div class="form-group">
+            <label class="form-label" for="nsVersion">版本</label>
+            <select id="nsVersion" class="form-select">
+              <option value="v5">v5 (SHA-1, 推荐)</option>
+              <option value="v3">v3 (MD5)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="nsSelect">命名空间</label>
+            <select id="nsSelect" class="form-select">
+              <option value="dns">DNS (6ba7b810-9dad-11d1-80b4-00c04fd430c8)</option>
+              <option value="url">URL (6ba7b811-9dad-11d1-80b4-00c04fd430c8)</option>
+              <option value="oid">OID (6ba7b812-9dad-11d1-80b4-00c04fd430c8)</option>
+              <option value="x500">X.500 (6ba7b814-9dad-11d1-80b4-00c04fd430c8)</option>
+              <option value="custom">自定义</option>
+            </select>
+          </div>
+          <div class="form-group hidden" id="customNsGroup">
+            <label class="form-label" for="customNs">自定义命名空间 UUID</label>
+            <input type="text" id="customNs" class="form-input" placeholder="例如: 550e8400-e29b-41d4-a716-446655440000">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="nsName">名称</label>
+            <input type="text" id="nsName" class="form-input" placeholder="例如: example.com">
+          </div>
+          <div class="btn-group mb-md">
+            <button class="btn btn-primary" id="generateNs">生成</button>
+          </div>
+          <div class="result-box" id="nsResult">
+            <span class="empty">生成的 UUID 将显示在这里</span>
+          </div>
+        </section>
+
+        <!-- Cascading Namespace Generator -->
+        <section class="tool-section">
+          <h2>级联命名空间生成</h2>
+          <p class="mb-md" style="color: var(--color-text-secondary);">
+            通过多级命名空间链式生成 UUID。每一级生成的 UUID 将作为下一级的命名空间。
+          </p>
+          <div class="form-group">
+            <label class="form-label" for="cascadeVersion">版本</label>
+            <select id="cascadeVersion" class="form-select">
+              <option value="v5">v5 (SHA-1, 推荐)</option>
+              <option value="v3">v3 (MD5)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="cascadeBaseNs">基础命名空间</label>
+            <select id="cascadeBaseNs" class="form-select">
+              <option value="dns">DNS (6ba7b810-9dad-11d1-80b4-00c04fd430c8)</option>
+              <option value="url">URL (6ba7b811-9dad-11d1-80b4-00c04fd430c8)</option>
+              <option value="oid">OID (6ba7b812-9dad-11d1-80b4-00c04fd430c8)</option>
+              <option value="x500">X.500 (6ba7b814-9dad-11d1-80b4-00c04fd430c8)</option>
+            </select>
+          </div>
+
+          <div class="cascade-levels" id="cascadeLevels">
+            <div class="cascade-level" data-level="1">
+              <div class="cascade-level-header">
+                <span class="cascade-level-label">层级 1</span>
+              </div>
+              <div class="cascade-level-content">
+                <input type="text" class="form-input cascade-name" placeholder="例如: example.com" data-level="1">
+                <span class="cascade-arrow">→</span>
+                <span class="cascade-uuid" data-level="1">-</span>
+                <button class="btn btn-sm btn-secondary cascade-copy" data-level="1" title="复制">&#128203;</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="btn-group mt-md">
+            <button class="btn btn-secondary" id="addCascadeLevel">+ 添加层级</button>
+            <button class="btn btn-primary" id="generateCascade">生成全部</button>
+          </div>
+        </section>
+
+        <!-- UUID Parser -->
+        <section class="tool-section">
+          <h2>UUID 解析</h2>
+          <div class="form-group">
+            <label class="form-label" for="parseInput">输入 UUID</label>
+            <input type="text" id="parseInput" class="form-input" placeholder="例如: 550e8400-e29b-41d4-a716-446655440000">
+          </div>
+          <button class="btn btn-primary mb-md" id="parseUuid">解析</button>
+          <div id="parseResult"></div>
+        </section>
+
+        <!-- Info -->
+        <section class="tool-section">
+          <h2>关于 UUID</h2>
+          <div class="info-box info mb-md">
+            <strong>什么是 UUID？</strong><br>
+            UUID (Universally Unique Identifier) 是一种软件构建的标准，用于在分布式计算环境中唯一标识信息，无需中央协调机构。
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>版本</th>
+                  <th>生成方式</th>
+                  <th>确定性</th>
+                  <th>说明</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>v1</td>
+                  <td>时间戳 + MAC 地址</td>
+                  <td>否</td>
+                  <td>可能泄露 MAC 地址</td>
+                </tr>
+                <tr>
+                  <td>v3</td>
+                  <td>MD5 哈希</td>
+                  <td>是</td>
+                  <td>基于命名空间 + 名称</td>
+                </tr>
+                <tr>
+                  <td>v4</td>
+                  <td>随机数</td>
+                  <td>否</td>
+                  <td>最常用，推荐使用</td>
+                </tr>
+                <tr>
+                  <td>v5</td>
+                  <td>SHA-1 哈希</td>
+                  <td>是</td>
+                  <td>基于命名空间 + 名称</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="mt-lg mb-md">UUID 格式</h3>
+          <div class="result-box">
+            <pre>xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx
+        │         │    │
+        │         │    └── 变体 (8, 9, a, b)
+        │         └─────── 版本 (1-5)
+        └─────────────────── 32 个十六进制字符
+
+示例: 550e8400-e29b-<strong>4</strong>1d4-<strong>a</strong>716-446655440000
+                    │      │
+                    │      └── 变体标识 (a = 10xx binary)
+                    └───────── 版本 4</pre>
+          </div>
+        </section>
+
+        <!-- Code Examples -->
+        <section class="tool-section">
+          <h2>代码示例</h2>
+          <div id="codeExamples"></div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <p class="footer-text">DevTools - 开发者工具集</p>
+        <div class="footer-links">
+          <a href="https://github.com" target="_blank">GitHub</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="../libs/crypto-js.min.js"></script>
+  <script src="../js/common.js"></script>
+  <script src="../js/code-tabs.js"></script>
+  <script>
+    (function() {
+      'use strict';
+
+      const { UUID, Utils } = DevTools;
+
+      // Elements
+      const v4Count = document.getElementById('v4Count');
+      const v4Format = document.getElementById('v4Format');
+      const v4Case = document.getElementById('v4Case');
+      const generateV4Btn = document.getElementById('generateV4');
+      const v4Result = document.getElementById('v4Result');
+      const copyV4Btn = document.getElementById('copyV4');
+
+      const nsVersion = document.getElementById('nsVersion');
+      const nsSelect = document.getElementById('nsSelect');
+      const customNsGroup = document.getElementById('customNsGroup');
+      const customNs = document.getElementById('customNs');
+      const nsName = document.getElementById('nsName');
+      const generateNsBtn = document.getElementById('generateNs');
+      const nsResult = document.getElementById('nsResult');
+
+      const parseInput = document.getElementById('parseInput');
+      const parseUuidBtn = document.getElementById('parseUuid');
+      const parseResult = document.getElementById('parseResult');
+
+      // Format UUID
+      function formatUuid(uuid, format, uppercase) {
+        let result = uuid;
+
+        switch (format) {
+          case 'no-dash':
+            result = uuid.replace(/-/g, '');
+            break;
+          case 'braces':
+            result = `{${uuid}}`;
+            break;
+          case 'urn':
+            result = `urn:uuid:${uuid}`;
+            break;
+        }
+
+        return uppercase ? result.toUpperCase() : result.toLowerCase();
+      }
+
+      // Generate UUID v4
+      generateV4Btn.addEventListener('click', () => {
+        const count = Math.min(Math.max(parseInt(v4Count.value) || 1, 1), 100);
+        const format = v4Format.value;
+        const uppercase = v4Case.value === 'upper';
+
+        const uuids = [];
+        for (let i = 0; i < count; i++) {
+          uuids.push(formatUuid(UUID.v4(), format, uppercase));
+        }
+
+        v4Result.value = uuids.join('\n');
+      });
+
+      // Copy v4 results
+      copyV4Btn.addEventListener('click', function() {
+        DevTools.Clipboard.copy(v4Result.value, this);
+      });
+
+      // Show/hide custom namespace input
+      nsSelect.addEventListener('change', () => {
+        customNsGroup.classList.toggle('hidden', nsSelect.value !== 'custom');
+      });
+
+      // Get namespace UUID
+      function getNamespace() {
+        switch (nsSelect.value) {
+          case 'dns': return UUID.NAMESPACE_DNS;
+          case 'url': return UUID.NAMESPACE_URL;
+          case 'oid': return UUID.NAMESPACE_OID;
+          case 'x500': return UUID.NAMESPACE_X500;
+          case 'custom': return customNs.value.trim();
+          default: return UUID.NAMESPACE_DNS;
+        }
+      }
+
+      // Generate UUID v3/v5
+      generateNsBtn.addEventListener('click', async () => {
+        const name = nsName.value.trim();
+        if (!name) {
+          nsResult.innerHTML = '<span class="empty">请输入名称</span>';
+          return;
+        }
+
+        const namespace = getNamespace();
+        if (!namespace || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(namespace)) {
+          nsResult.innerHTML = '<span class="empty">无效的命名空间 UUID</span>';
+          return;
+        }
+
+        try {
+          let uuid;
+          if (nsVersion.value === 'v5') {
+            uuid = await UUID.v5(namespace, name);
+          } else {
+            uuid = await UUID.v3(namespace, name);
+          }
+
+          nsResult.innerHTML = `<button class="copy-btn">&#128203; Copy</button><pre>${uuid}</pre>`;
+          nsResult.querySelector('.copy-btn').addEventListener('click', function() {
+            DevTools.Clipboard.copy(uuid, this);
+          });
+        } catch (e) {
+          nsResult.innerHTML = `<span class="empty">错误: ${e.message}</span>`;
+        }
+      });
+
+      // Parse UUID
+      parseUuidBtn.addEventListener('click', () => {
+        let input = parseInput.value.trim();
+
+        // Remove braces and urn prefix
+        input = input.replace(/^\{|\}$/g, '').replace(/^urn:uuid:/i, '');
+
+        // Validate
+        const uuidRegex = /^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$/i;
+        if (!uuidRegex.test(input)) {
+          parseResult.innerHTML = '<div class="info-box error">无效的 UUID 格式</div>';
+          return;
+        }
+
+        // Normalize (add dashes if needed)
+        if (input.length === 32) {
+          input = `${input.slice(0,8)}-${input.slice(8,12)}-${input.slice(12,16)}-${input.slice(16,20)}-${input.slice(20)}`;
+        }
+
+        const lower = input.toLowerCase();
+
+        // Extract parts
+        const version = parseInt(lower[14], 16);
+        const variant = parseInt(lower[19], 16);
+
+        let variantDesc;
+        if ((variant & 0x8) === 0) {
+          variantDesc = 'NCS (向后兼容)';
+        } else if ((variant & 0xc) === 0x8) {
+          variantDesc = 'RFC 4122';
+        } else if ((variant & 0xe) === 0xc) {
+          variantDesc = 'Microsoft GUID';
+        } else {
+          variantDesc = '保留';
+        }
+
+        let versionDesc;
+        switch (version) {
+          case 1: versionDesc = 'v1 (时间戳 + MAC)'; break;
+          case 2: versionDesc = 'v2 (DCE Security)'; break;
+          case 3: versionDesc = 'v3 (MD5 哈希)'; break;
+          case 4: versionDesc = 'v4 (随机)'; break;
+          case 5: versionDesc = 'v5 (SHA-1 哈希)'; break;
+          default: versionDesc = `未知 (${version})`;
+        }
+
+        parseResult.innerHTML = `
+          <div class="table-container">
+            <table>
+              <tbody>
+                <tr><td>标准格式</td><td style="font-family: monospace;">${lower}</td></tr>
+                <tr><td>无连字符</td><td style="font-family: monospace;">${lower.replace(/-/g, '')}</td></tr>
+                <tr><td>大括号格式</td><td style="font-family: monospace;">{${lower}}</td></tr>
+                <tr><td>URN 格式</td><td style="font-family: monospace;">urn:uuid:${lower}</td></tr>
+                <tr><td>版本</td><td>${versionDesc}</td></tr>
+                <tr><td>变体</td><td>${variantDesc}</td></tr>
+              </tbody>
+            </table>
+          </div>
+        `;
+      });
+
+      // Enter key support
+      parseInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') parseUuidBtn.click();
+      });
+
+      // Generate initial UUID
+      generateV4Btn.click();
+
+      // ========== Cascading Namespace Generation ==========
+      const cascadeVersion = document.getElementById('cascadeVersion');
+      const cascadeBaseNs = document.getElementById('cascadeBaseNs');
+      const cascadeLevels = document.getElementById('cascadeLevels');
+      const addCascadeLevelBtn = document.getElementById('addCascadeLevel');
+      const generateCascadeBtn = document.getElementById('generateCascade');
+
+      let cascadeLevelCount = 1;
+
+      // Get base namespace for cascade
+      function getCascadeBaseNamespace() {
+        switch (cascadeBaseNs.value) {
+          case 'dns': return UUID.NAMESPACE_DNS;
+          case 'url': return UUID.NAMESPACE_URL;
+          case 'oid': return UUID.NAMESPACE_OID;
+          case 'x500': return UUID.NAMESPACE_X500;
+          default: return UUID.NAMESPACE_DNS;
+        }
+      }
+
+      // Add cascade level
+      function addCascadeLevel() {
+        cascadeLevelCount++;
+        const levelHtml = `
+          <div class="cascade-level" data-level="${cascadeLevelCount}">
+            <div class="cascade-level-header">
+              <span class="cascade-level-label">层级 ${cascadeLevelCount}</span>
+              <button class="btn btn-sm btn-secondary cascade-remove" data-level="${cascadeLevelCount}" title="删除层级">−</button>
+            </div>
+            <div class="cascade-level-content">
+              <input type="text" class="form-input cascade-name" placeholder="例如: users" data-level="${cascadeLevelCount}">
+              <span class="cascade-arrow">→</span>
+              <span class="cascade-uuid" data-level="${cascadeLevelCount}">-</span>
+              <button class="btn btn-sm btn-secondary cascade-copy" data-level="${cascadeLevelCount}" title="复制">&#128203;</button>
+            </div>
+          </div>
+        `;
+        cascadeLevels.insertAdjacentHTML('beforeend', levelHtml);
+
+        // Bind remove button
+        const removeBtn = cascadeLevels.querySelector(`.cascade-remove[data-level="${cascadeLevelCount}"]`);
+        removeBtn.addEventListener('click', () => removeCascadeLevel(cascadeLevelCount));
+
+        // Bind copy button
+        const copyBtn = cascadeLevels.querySelector(`.cascade-copy[data-level="${cascadeLevelCount}"]`);
+        copyBtn.addEventListener('click', function() {
+          const uuid = cascadeLevels.querySelector(`.cascade-uuid[data-level="${this.dataset.level}"]`).textContent;
+          if (uuid && uuid !== '-') {
+            DevTools.Clipboard.copy(uuid, this);
+          }
+        });
+
+        // Bind input for real-time generation
+        const input = cascadeLevels.querySelector(`.cascade-name[data-level="${cascadeLevelCount}"]`);
+        input.addEventListener('input', generateCascadeUUIDs);
+      }
+
+      // Remove cascade level
+      function removeCascadeLevel(level) {
+        const levelEl = cascadeLevels.querySelector(`.cascade-level[data-level="${level}"]`);
+        if (levelEl) {
+          levelEl.remove();
+          renumberCascadeLevels();
+          generateCascadeUUIDs();
+        }
+      }
+
+      // Renumber cascade levels
+      function renumberCascadeLevels() {
+        const levels = cascadeLevels.querySelectorAll('.cascade-level');
+        levels.forEach((el, index) => {
+          const newLevel = index + 1;
+          el.dataset.level = newLevel;
+          el.querySelector('.cascade-level-label').textContent = `层级 ${newLevel}`;
+          el.querySelector('.cascade-name').dataset.level = newLevel;
+          el.querySelector('.cascade-uuid').dataset.level = newLevel;
+          el.querySelector('.cascade-copy').dataset.level = newLevel;
+          const removeBtn = el.querySelector('.cascade-remove');
+          if (removeBtn) {
+            removeBtn.dataset.level = newLevel;
+          }
+        });
+        cascadeLevelCount = levels.length;
+      }
+
+      // Generate cascade UUIDs
+      async function generateCascadeUUIDs() {
+        const levels = cascadeLevels.querySelectorAll('.cascade-level');
+        let currentNamespace = getCascadeBaseNamespace();
+        const version = cascadeVersion.value;
+
+        for (const level of levels) {
+          const input = level.querySelector('.cascade-name');
+          const uuidSpan = level.querySelector('.cascade-uuid');
+          const name = input.value.trim();
+
+          if (!name) {
+            uuidSpan.textContent = '-';
+            continue;
+          }
+
+          try {
+            let uuid;
+            if (version === 'v5') {
+              uuid = await UUID.v5(currentNamespace, name);
+            } else {
+              uuid = await UUID.v3(currentNamespace, name);
+            }
+            uuidSpan.textContent = uuid;
+            currentNamespace = uuid;
+          } catch (e) {
+            uuidSpan.textContent = '错误';
+            break;
+          }
+        }
+      }
+
+      // Bind events
+      addCascadeLevelBtn.addEventListener('click', addCascadeLevel);
+      generateCascadeBtn.addEventListener('click', generateCascadeUUIDs);
+      cascadeVersion.addEventListener('change', generateCascadeUUIDs);
+      cascadeBaseNs.addEventListener('change', generateCascadeUUIDs);
+
+      // Bind initial level input
+      const initialInput = cascadeLevels.querySelector('.cascade-name[data-level="1"]');
+      initialInput.addEventListener('input', generateCascadeUUIDs);
+
+      // Bind initial copy button
+      const initialCopyBtn = cascadeLevels.querySelector('.cascade-copy[data-level="1"]');
+      initialCopyBtn.addEventListener('click', function() {
+        const uuid = cascadeLevels.querySelector('.cascade-uuid[data-level="1"]').textContent;
+        if (uuid && uuid !== '-') {
+          DevTools.Clipboard.copy(uuid, this);
+        }
+      });
+
+      // Code examples
+      const codeTabs = new CodeTabs('#codeExamples');
+      codeTabs.setExamples([
+        { lang: 'javascript', label: 'JavaScript', code: CodeTabs.templates.uuid.javascript },
+        { lang: 'python', label: 'Python', code: CodeTabs.templates.uuid.python },
+        { lang: 'java', label: 'Java', code: CodeTabs.templates.uuid.java },
+        { lang: 'swift', label: 'Swift', code: CodeTabs.templates.uuid.swift },
+        { lang: 'go', label: 'Go', code: CodeTabs.templates.uuid.go }
+      ]);
+    })();
+  </script>
+</body>
+</html>

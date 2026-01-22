@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="DevTools - 开发者常用工具集，提供编码解码、加密哈希、时间转换等在线工具">
+  <title>DevTools - 开发者工具</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <a href="index.html" class="logo">
+          <span class="logo-icon">&#128736;</span>
+          <span>DevTools</span>
+        </a>
+        <nav class="nav">
+          <a href="index.html" class="nav-link active">首页</a>
+          <a href="tools/unix-timestamp.html" class="nav-link">时间戳</a>
+          <a href="tools/base64.html" class="nav-link">Base64</a>
+          <a href="tools/url-encode.html" class="nav-link">URL编码</a>
+          <a href="tools/hash.html" class="nav-link">Hash</a>
+          <a href="tools/uuid.html" class="nav-link">UUID</a>
+          <a href="password.html" class="nav-link">密码</a>
+          <button class="theme-toggle" aria-label="切换主题">&#9790;</button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <div class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+          <h1>开发者工具集</h1>
+          <p>提供常用的编码/解码、加密/哈希、时间转换等在线工具，纯前端实现，数据不会上传至服务器</p>
+        </section>
+
+        <!-- Tools Grid -->
+        <section class="tools-grid">
+          <!-- Unix Timestamp -->
+          <a href="tools/unix-timestamp.html" class="tool-card">
+            <div class="tool-card-icon">&#128336;</div>
+            <h3>Unix 时间戳</h3>
+            <p>时间戳与日期时间的双向转换，支持秒/毫秒格式，提供多语言代码示例</p>
+          </a>
+
+          <!-- Base64 -->
+          <a href="tools/base64.html" class="tool-card">
+            <div class="tool-card-icon">&#128196;</div>
+            <h3>Base64 编解码</h3>
+            <p>Base64 文本和文件的编码与解码，支持标准模式和 URL 安全模式</p>
+          </a>
+
+          <!-- URL Encode -->
+          <a href="tools/url-encode.html" class="tool-card">
+            <div class="tool-card-icon">&#128279;</div>
+            <h3>URL 编解码</h3>
+            <p>URL 编码与解码工具，支持 encodeURI、encodeURIComponent 等多种模式</p>
+          </a>
+
+          <!-- Hash -->
+          <a href="tools/hash.html" class="tool-card">
+            <div class="tool-card-icon">&#128274;</div>
+            <h3>Hash 计算器</h3>
+            <p>计算文本或文件的 MD5、SHA1、SHA256、SHA3 等哈希值</p>
+          </a>
+
+          <!-- UUID -->
+          <a href="tools/uuid.html" class="tool-card">
+            <div class="tool-card-icon">&#128273;</div>
+            <h3>UUID 生成器</h3>
+            <p>生成 UUID v3、v4、v5，支持命名空间和批量生成</p>
+          </a>
+
+          <!-- Password Generator -->
+          <a href="tools/password.html" class="tool-card">
+            <div class="tool-card-icon">&#128273;</div>
+            <h3>密码生成器</h3>
+            <p>生成安全的密码</p>
+          </a>
+        </section>
+
+        <!-- Features -->
+        <section class="tool-section mt-lg">
+          <h2>特性</h2>
+          <div class="tools-grid">
+            <div style="padding: 1rem;">
+              <h3 style="margin-bottom: 0.5rem;">&#128274; 隐私安全</h3>
+              <p style="color: var(--color-text-secondary); font-size: 0.9rem;">
+                所有计算在浏览器本地完成，数据不会上传至任何服务器
+              </p>
+            </div>
+            <div style="padding: 1rem;">
+              <h3 style="margin-bottom: 0.5rem;">&#127769; 主题切换</h3>
+              <p style="color: var(--color-text-secondary); font-size: 0.9rem;">
+                支持亮色/暗色主题切换，自动跟随系统偏好
+              </p>
+            </div>
+            <div style="padding: 1rem;">
+              <h3 style="margin-bottom: 0.5rem;">&#128187; 代码示例</h3>
+              <p style="color: var(--color-text-secondary); font-size: 0.9rem;">
+                提供 JavaScript、Python、Java、Swift、Go 等多语言代码示例
+              </p>
+            </div>
+            <div style="padding: 1rem;">
+              <h3 style="margin-bottom: 0.5rem;">&#128206; 文件支持</h3>
+              <p style="color: var(--color-text-secondary); font-size: 0.9rem;">
+                支持拖拽上传文件进行编解码或哈希计算（最大 50MB）
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <p class="footer-text">DevTools - 开发者工具集</p>
+        <div class="footer-links">
+          <a href="https://github.com" target="_blank">GitHub</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="js/common.js"></script>
+</body>
+</html>

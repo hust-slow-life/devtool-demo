@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Unix 时间戳转换工具 - 时间戳与日期时间的双向转换">
+  <title>Unix 时间戳 - DevTools</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <a href="../index.html" class="logo">
+          <span class="logo-icon">&#128736;</span>
+          <span>DevTools</span>
+        </a>
+        <nav class="nav">
+          <a href="../index.html" class="nav-link">首页</a>
+          <a href="unix-timestamp.html" class="nav-link active">时间戳</a>
+          <a href="base64.html" class="nav-link">Base64</a>
+          <a href="url-encode.html" class="nav-link">URL编码</a>
+          <a href="hash.html" class="nav-link">Hash</a>
+          <a href="uuid.html" class="nav-link">UUID</a>
+          <a href="password.html" class="nav-link">密码</a>
+          <button class="theme-toggle" aria-label="切换主题">&#9790;</button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <div class="container">
+        <!-- Tool Header -->
+        <div class="tool-header">
+          <h1>&#128336; Unix 时间戳</h1>
+          <p>Unix 时间戳是从 1970 年 1 月 1 日 00:00:00 UTC 到指定时间的秒数（或毫秒数）</p>
+        </div>
+
+        <!-- Current Time Display -->
+        <section class="tool-section">
+          <h2>当前时间</h2>
+          <div class="current-time">
+            <div class="time-display">
+              <div class="time-display-label">秒级时间戳</div>
+              <div class="time-display-value" id="currentSeconds">-</div>
+            </div>
+            <div class="time-display">
+              <div class="time-display-label">毫秒级时间戳</div>
+              <div class="time-display-value" id="currentMillis">-</div>
+            </div>
+            <div class="time-display">
+              <div class="time-display-label">本地时间</div>
+              <div class="time-display-value" id="currentLocal" style="font-size: 1rem;">-</div>
+            </div>
+            <div class="time-display">
+              <div class="time-display-label">UTC 时间</div>
+              <div class="time-display-value" id="currentUtc" style="font-size: 1rem;">-</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Timestamp to Date -->
+        <section class="tool-section">
+          <h2>时间戳 &#8594; 日期时间</h2>
+          <div class="form-inline">
+            <div class="form-group" style="flex: 2;">
+              <label class="form-label" for="timestampInput">时间戳</label>
+              <input type="text" id="timestampInput" class="form-input" placeholder="输入 Unix 时间戳">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="timestampUnit">单位</label>
+              <select id="timestampUnit" class="form-select">
+                <option value="auto">自动检测</option>
+                <option value="s">秒 (s)</option>
+                <option value="ms">毫秒 (ms)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <button class="btn btn-primary" id="convertToDate">转换</button>
+            </div>
+          </div>
+          <div class="mt-md">
+            <div class="result-box" id="timestampResult">
+              <span class="empty">转换结果将显示在这里</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Date to Timestamp -->
+        <section class="tool-section">
+          <h2>日期时间 &#8594; 时间戳</h2>
+          <div class="form-inline">
+            <div class="form-group">
+              <label class="form-label" for="dateInput">日期</label>
+              <input type="date" id="dateInput" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="timeInput">时间</label>
+              <input type="time" id="timeInput" class="form-input" step="1">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="tzSelect">时区</label>
+              <select id="tzSelect" class="form-select">
+                <option value="local">本地时区</option>
+                <option value="utc">UTC</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <button class="btn btn-primary" id="convertToTimestamp">转换</button>
+            </div>
+          </div>
+          <div class="mt-md">
+            <div class="result-box" id="dateResult">
+              <span class="empty">转换结果将显示在这里</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Info -->
+        <section class="tool-section">
+          <h2>关于 Unix 时间戳</h2>
+          <div class="info-box info">
+            <strong>什么是 Unix 时间戳？</strong><br>
+            Unix 时间戳（Unix Timestamp）是一种时间表示方式，定义为从 UTC 时间 1970 年 1 月 1 日 00:00:00（称为 Unix 纪元）起至现在的总秒数。
+          </div>
+          <div class="table-container mt-md">
+            <table>
+              <thead>
+                <tr>
+                  <th>精度</th>
+                  <th>长度</th>
+                  <th>示例</th>
+                  <th>说明</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>秒级</td>
+                  <td>10 位</td>
+                  <td>1704067200</td>
+                  <td>最常用的格式</td>
+                </tr>
+                <tr>
+                  <td>毫秒级</td>
+                  <td>13 位</td>
+                  <td>1704067200000</td>
+                  <td>JavaScript Date.now()</td>
+                </tr>
+                <tr>
+                  <td>微秒级</td>
+                  <td>16 位</td>
+                  <td>1704067200000000</td>
+                  <td>较少使用</td>
+                </tr>
+                <tr>
+                  <td>纳秒级</td>
+                  <td>19 位</td>
+                  <td>1704067200000000000</td>
+                  <td>高精度场景</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Code Examples -->
+        <section class="tool-section">
+          <h2>代码示例</h2>
+          <div id="codeExamples"></div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <p class="footer-text">DevTools - 开发者工具集</p>
+        <div class="footer-links">
+          <a href="https://github.com" target="_blank">GitHub</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="../js/common.js"></script>
+  <script src="../js/code-tabs.js"></script>
+  <script>
+    (function() {
+      'use strict';
+
+      // Elements
+      const currentSeconds = document.getElementById('currentSeconds');
+      const currentMillis = document.getElementById('currentMillis');
+      const currentLocal = document.getElementById('currentLocal');
+      const currentUtc = document.getElementById('currentUtc');
+
+      const timestampInput = document.getElementById('timestampInput');
+      const timestampUnit = document.getElementById('timestampUnit');
+      const convertToDateBtn = document.getElementById('convertToDate');
+      const timestampResult = document.getElementById('timestampResult');
+
+      const dateInput = document.getElementById('dateInput');
+      const timeInput = document.getElementById('timeInput');
+      const tzSelect = document.getElementById('tzSelect');
+      const convertToTimestampBtn = document.getElementById('convertToTimestamp');
+      const dateResult = document.getElementById('dateResult');
+
+      // Update current time
+      function updateCurrentTime() {
+        const now = new Date();
+        const seconds = Math.floor(now.getTime() / 1000);
+        const millis = now.getTime();
+
+        currentSeconds.textContent = seconds;
+        currentMillis.textContent = millis;
+        currentLocal.textContent = now.toLocaleString('zh-CN');
+        currentUtc.textContent = now.toUTCString();
+      }
+
+      // Start updating current time
+      updateCurrentTime();
+      setInterval(updateCurrentTime, 1000);
+
+      // Initialize date/time inputs with current time
+      const now = new Date();
+      dateInput.value = now.toISOString().split('T')[0];
+      timeInput.value = now.toTimeString().split(' ')[0];
+
+      // Format date result
+      function formatDateResult(date, timestamp) {
+        const pad = n => String(n).padStart(2, '0');
+
+        return `本地时间: ${date.toLocaleString('zh-CN')}
+UTC 时间: ${date.toUTCString()}
+ISO 8601: ${date.toISOString()}
+
+时间戳 (秒): ${Math.floor(timestamp / 1000)}
+时间戳 (毫秒): ${timestamp}
+
+年: ${date.getFullYear()}
+月: ${pad(date.getMonth() + 1)}
+日: ${pad(date.getDate())}
+时: ${pad(date.getHours())}
+分: ${pad(date.getMinutes())}
+秒: ${pad(date.getSeconds())}
+星期: ${['日', '一', '二', '三', '四', '五', '六'][date.getDay()]}`;
+      }
+
+      // Convert timestamp to date
+      convertToDateBtn.addEventListener('click', () => {
+        const input = timestampInput.value.trim();
+        if (!input) {
+          timestampResult.innerHTML = '<span class="empty">请输入时间戳</span>';
+          return;
+        }
+
+        let timestamp = parseInt(input, 10);
+        if (isNaN(timestamp)) {
+          timestampResult.innerHTML = '<span class="empty">无效的时间戳</span>';
+          return;
+        }
+
+        // Determine unit
+        let unit = timestampUnit.value;
+        if (unit === 'auto') {
+          // Auto-detect: if length >= 13, assume milliseconds
+          unit = input.length >= 13 ? 'ms' : 's';
+        }
+
+        // Convert to milliseconds
+        const millis = unit === 's' ? timestamp * 1000 : timestamp;
+        const date = new Date(millis);
+
+        if (isNaN(date.getTime())) {
+          timestampResult.innerHTML = '<span class="empty">无效的时间戳</span>';
+          return;
+        }
+
+        timestampResult.innerHTML = `<button class="copy-btn">&#128203; Copy</button><pre>${formatDateResult(date, millis)}</pre>`;
+        timestampResult.querySelector('.copy-btn').addEventListener('click', function() {
+          DevTools.Clipboard.copy(timestampResult.querySelector('pre').textContent, this);
+        });
+      });
+
+      // Convert date to timestamp
+      convertToTimestampBtn.addEventListener('click', () => {
+        const dateValue = dateInput.value;
+        const timeValue = timeInput.value || '00:00:00';
+
+        if (!dateValue) {
+          dateResult.innerHTML = '<span class="empty">请选择日期</span>';
+          return;
+        }
+
+        let date;
+        if (tzSelect.value === 'utc') {
+          date = new Date(`${dateValue}T${timeValue}Z`);
+        } else {
+          date = new Date(`${dateValue}T${timeValue}`);
+        }
+
+        if (isNaN(date.getTime())) {
+          dateResult.innerHTML = '<span class="empty">无效的日期时间</span>';
+          return;
+        }
+
+        const millis = date.getTime();
+        dateResult.innerHTML = `<button class="copy-btn">&#128203; Copy</button><pre>${formatDateResult(date, millis)}</pre>`;
+        dateResult.querySelector('.copy-btn').addEventListener('click', function() {
+          DevTools.Clipboard.copy(dateResult.querySelector('pre').textContent, this);
+        });
+      });
+
+      // Enter key support
+      timestampInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') convertToDateBtn.click();
+      });
+
+      // Code examples
+      const codeTabs = new CodeTabs('#codeExamples');
+      codeTabs.setExamples([
+        { lang: 'javascript', label: 'JavaScript', code: CodeTabs.templates.unixTimestamp.javascript },
+        { lang: 'python', label: 'Python', code: CodeTabs.templates.unixTimestamp.python },
+        { lang: 'java', label: 'Java', code: CodeTabs.templates.unixTimestamp.java },
+        { lang: 'swift', label: 'Swift', code: CodeTabs.templates.unixTimestamp.swift },
+        { lang: 'go', label: 'Go', code: CodeTabs.templates.unixTimestamp.go }
+      ]);
+    })();
+  </script>
+</body>
+</html>
